@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { PriorityGroup, ProjectLifeCycle } from './project.enums';
 
 @Entity()
@@ -28,7 +34,7 @@ export class Project {
     enum: ProjectLifeCycle,
     default: ProjectLifeCycle.ToDo,
   })
-  ProjectLifeCycle: ProjectLifeCycle;
+  projectLifeCycle: ProjectLifeCycle;
 
   @Column({
     default: false,
@@ -71,4 +77,10 @@ export class Project {
     nullable: true,
   })
   deactivatedAt: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 }
