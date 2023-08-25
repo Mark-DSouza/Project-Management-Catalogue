@@ -37,7 +37,7 @@ export class Project {
   projectLifeCycle: ProjectLifeCycle;
 
   @Column({
-    default: false,
+    default: true,
   })
   active: boolean;
 
