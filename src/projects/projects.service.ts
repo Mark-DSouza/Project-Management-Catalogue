@@ -10,7 +10,6 @@ export class ProjectsService {
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
   ) {}
-
   private readonly logger = new Logger(ProjectsService.name);
 
   private getProjectBaseQuery() {
@@ -19,11 +18,11 @@ export class ProjectsService {
       .orderBy('project.id');
   }
 
-  create(requestBody: CreateProjectDto) {
+  createProject(requestBody: CreateProjectDto) {
     return this.projectRepository.save(requestBody);
   }
 
-  findAll() {
+  findAllProjects() {
     return this.getProjectBaseQuery().getMany();
   }
 
@@ -31,7 +30,7 @@ export class ProjectsService {
     return this.projectRepository.findOne({ where: { id } });
   }
 
-  destroy(id: number) {
+  deleteByProjectId(id: number) {
     return this.projectRepository
       .createQueryBuilder('project')
       .delete()
