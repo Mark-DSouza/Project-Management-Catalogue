@@ -42,41 +42,44 @@ export class Project {
   active: boolean;
 
   @Column({
+    type: 'bigint',
     default: 0,
   })
   timeInToDoState: number;
 
   @Column({
+    type: 'bigint',
     default: 0,
   })
   timeInPlanningState: number;
 
   @Column({
+    type: 'bigint',
     default: 0,
   })
   timeInDevelopmentState: number;
 
   @Column({
+    type: 'bigint',
     default: 0,
   })
   timeInActiveState: number;
 
   @Column({
+    type: 'bigint',
     default: 0,
   })
   timeInInactiveState: number;
 
   @Column({
-    type: 'timestamp',
     nullable: true,
   })
-  activatedAt: number;
+  activatedAt: Date;
 
   @Column({
-    type: 'timestamp',
     nullable: true,
   })
-  deactivatedAt: number;
+  deactivatedAt: Date;
 
   @CreateDateColumn()
   createdDate: Date;
