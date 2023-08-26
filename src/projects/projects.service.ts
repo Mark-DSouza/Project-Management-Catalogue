@@ -30,4 +30,12 @@ export class ProjectsService {
   findByProjectId(id: number) {
     return this.projectRepository.findOne({ where: { id } });
   }
+
+  destroy(id: number) {
+    return this.projectRepository
+      .createQueryBuilder('project')
+      .delete()
+      .where('id = :id', { id })
+      .execute();
+  }
 }
