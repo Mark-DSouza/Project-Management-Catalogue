@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProjectDto } from './create-project.dto';
+import { UpsertProjectDto } from './upsert-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -18,7 +18,7 @@ export class ProjectsService {
       .orderBy('project.id');
   }
 
-  createProject(requestBody: CreateProjectDto) {
+  createProject(requestBody: UpsertProjectDto) {
     return this.projectRepository.save(requestBody);
   }
 
@@ -34,6 +34,15 @@ export class ProjectsService {
     return this.projectRepository
       .createQueryBuilder('project')
       .delete()
+      .where('id = :id', { id })
+      .execute();
+  }
+
+  updateByProjectId(id: number, requestBody: UpsertProjectDto) {
+    return this.projectRepository
+      .createQueryBuilder('project')
+      .update()
+      .set(requestBody)
       .where('id = :id', { id })
       .execute();
   }

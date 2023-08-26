@@ -5,10 +5,11 @@ import {
   Get,
   Logger,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
-import { CreateProjectDto } from './create-project.dto';
+import { UpsertProjectDto } from './upsert-project.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -21,13 +22,25 @@ export class ProjectsController {
   }
 
   @Post()
-  async create(@Body() requestBody: CreateProjectDto) {
+  async create(@Body() requestBody: UpsertProjectDto) {
     return await this.projectsService.createProject(requestBody);
   }
 
   @Get(':projectId')
   async show(@Param('projectId') projectId: string) {
     return await this.projectsService.findByProjectId(parseInt(projectId));
+  }
+
+  @Patch(':projectId')
+  async update(
+    @Param('projectId') projectId: string,
+    @Body() requestBody: UpsertProjectDto,
+  ) {
+    this.logger.log(requestBody);
+    return await this.projectsService.updateByProjectId(
+      parseInt(projectId),
+      requestBody,
+    );
   }
 
   @Delete(':projectId')
