@@ -40,7 +40,7 @@ export class ProjectsService {
       .execute();
   }
 
-  async updateByProjectId(id: number, requestBody: UpdateProjectDto) {
+  updateByProjectId(id: number, requestBody: UpdateProjectDto) {
     const updateValue = { ...new Project(), ...requestBody };
 
     const presentTime = new Date();
