@@ -37,49 +37,19 @@ export class Project {
   projectLifeCycle: ProjectLifeCycle;
 
   @Column({
-    default: true,
+    nullable: true,
   })
-  active: boolean;
-
-  @Column({
-    type: 'bigint',
-    default: 0,
-  })
-  timeInToDoState: number;
-
-  @Column({
-    type: 'bigint',
-    default: 0,
-  })
-  timeInPlanningState: number;
-
-  @Column({
-    type: 'bigint',
-    default: 0,
-  })
-  timeInDevelopmentState: number;
-
-  @Column({
-    type: 'bigint',
-    default: 0,
-  })
-  timeInActiveState: number;
-
-  @Column({
-    type: 'bigint',
-    default: 0,
-  })
-  timeInInactiveState: number;
+  planningAt: Date;
 
   @Column({
     nullable: true,
   })
-  activatedAt: Date;
+  developmentAt: Date;
 
   @Column({
     nullable: true,
   })
-  deactivatedAt: Date;
+  completedAt: Date;
 
   @CreateDateColumn()
   createdDate: Date;

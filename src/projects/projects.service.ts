@@ -1,8 +1,10 @@
+import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpsertProjectDto } from './upsert-project.dto';
+import { CreateProjectDto } from './dtos/create-project.dto';
+import { ProjectLifeCycle } from './project.enums';
 
 @Injectable()
 export class ProjectsService {
@@ -18,7 +20,7 @@ export class ProjectsService {
       .orderBy('project.id');
   }
 
-  createProject(requestBody: UpsertProjectDto) {
+  createProject(requestBody: CreateProjectDto) {
     return this.projectRepository.save(requestBody);
   }
 
@@ -38,11 +40,32 @@ export class ProjectsService {
       .execute();
   }
 
-  updateByProjectId(id: number, requestBody: UpsertProjectDto) {
+  async updateByProjectId(id: number, requestBody: UpdateProjectDto) {
+    const updateValue = { ...new Project(), ...requestBody };
+
+    const presentTime = new Date();
+    switch (requestBody.projectLifeCycle) {
+      case ProjectLifeCycle.Planning: {
+        updateValue.planningAt = presentTime;
+        break;
+      }
+      case ProjectLifeCycle.Development: {
+        updateValue.developmentAt = presentTime;
+        break;
+      }
+      case ProjectLifeCycle.Complete: {
+        updateValue.completedAt = presentTime;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
     return this.projectRepository
       .createQueryBuilder('project')
       .update()
-      .set(requestBody)
+      .set(updateValue)
       .where('id = :id', { id })
       .execute();
   }
