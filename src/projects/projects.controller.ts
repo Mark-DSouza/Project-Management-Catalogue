@@ -27,6 +27,13 @@ export class ProjectsController {
     return await this.projectsService.createProject(requestBody);
   }
 
+  @Get(':projectId/metrics')
+  async showMetrics(@Param('projectId') projectId: string) {
+    return await this.projectsService.getTimeMetricsByProjectId(
+      parseInt(projectId),
+    );
+  }
+
   @Get(':projectId')
   async show(@Param('projectId') projectId: string) {
     return await this.projectsService.findByProjectId(parseInt(projectId));

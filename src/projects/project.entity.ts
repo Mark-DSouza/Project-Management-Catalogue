@@ -39,17 +39,17 @@ export class Project {
   @Column({
     nullable: true,
   })
-  planningAt: Date;
+  planningAt?: Date;
 
   @Column({
     nullable: true,
   })
-  developmentAt: Date;
+  developmentAt?: Date;
 
   @Column({
     nullable: true,
   })
-  completedAt: Date;
+  completedAt?: Date;
 
   @CreateDateColumn()
   createdDate: Date;
