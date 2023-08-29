@@ -19,24 +19,22 @@ export class ProjectsController {
 
   @Get()
   async index() {
-    return await this.projectsService.findAllProjects();
+    return this.projectsService.findAllProjects();
   }
 
   @Post()
   async create(@Body() requestBody: CreateProjectDto) {
-    return await this.projectsService.createProject(requestBody);
+    return this.projectsService.createProject(requestBody);
   }
 
   @Get(':projectId/metrics')
   async showMetrics(@Param('projectId') projectId: string) {
-    return await this.projectsService.getTimeMetricsByProjectId(
-      parseInt(projectId),
-    );
+    return this.projectsService.getTimeMetricsByProjectId(parseInt(projectId));
   }
 
   @Get(':projectId')
   async show(@Param('projectId') projectId: string) {
-    return await this.projectsService.findByProjectId(parseInt(projectId));
+    return this.projectsService.findByProjectId(parseInt(projectId));
   }
 
   @Patch(':projectId')
@@ -45,7 +43,7 @@ export class ProjectsController {
     @Body() requestBody: UpdateProjectDto,
   ) {
     this.logger.log(requestBody);
-    return await this.projectsService.updateByProjectId(
+    return this.projectsService.updateByProjectId(
       parseInt(projectId),
       requestBody,
     );
@@ -53,6 +51,6 @@ export class ProjectsController {
 
   @Delete(':projectId')
   async destroy(@Param('projectId') projectId: string) {
-    return await this.projectsService.deleteByProjectId(parseInt(projectId));
+    return this.projectsService.deleteByProjectId(parseInt(projectId));
   }
 }
