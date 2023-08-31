@@ -1,12 +1,18 @@
-import { UpdateProjectDto } from '../dtos/update-project.dto';
+import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Project } from '../project.entity';
+import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProjectDto } from '../dtos/create-project.dto';
-import { ProjectLifeCycle } from '../project.enums';
-import { TimeHelper } from './time-helper';
-import { MetricsGenerator } from './metrics-generator';
+import { CreateProjectDto } from './dtos/create-project.dto';
+import { ProjectLifeCycle } from './project.enums';
+import {
+  millisecondsToSeconds,
+  millisecondsToMinutes,
+  millisecondsToHours,
+  millisecondsToDays,
+  millisecondsToWeeks,
+} from './helpers/time-helper';
+import { metricsGenerator } from './helpers/generate-metrics';
 
 @Injectable()
 export class ProjectsService {
@@ -104,31 +110,21 @@ export class ProjectsService {
       return presentTimestamp - completedAtTimestamp;
     })();
 
-    const {
-      millisecondsToSeconds,
-      millisecondsToMinutes,
-      millisecondsToHours,
-      millisecondsToDays,
-      millisecondsToWeeks,
-    } = TimeHelper;
-
-    const metricGenerator = new MetricsGenerator(
+    const generateMetrics = metricsGenerator({
       millisecondsSinceStarted,
       millisecondsInToDo,
       millisecondsInPlanning,
       millisecondsInDevelopment,
       millisecondsSinceCompleted,
-    );
+    });
 
     return {
-      milliseconds: metricGenerator.generateMetrics(
-        (milliseconds) => milliseconds,
-      ),
-      seconds: metricGenerator.generateMetrics(millisecondsToSeconds),
-      minutes: metricGenerator.generateMetrics(millisecondsToMinutes),
-      hours: metricGenerator.generateMetrics(millisecondsToHours),
-      days: metricGenerator.generateMetrics(millisecondsToDays),
-      weeks: metricGenerator.generateMetrics(millisecondsToWeeks),
+      milliseconds: generateMetrics((milliseconds) => milliseconds),
+      seconds: generateMetrics(millisecondsToSeconds),
+      minutes: generateMetrics(millisecondsToMinutes),
+      hours: generateMetrics(millisecondsToHours),
+      days: generateMetrics(millisecondsToDays),
+      weeks: generateMetrics(millisecondsToWeeks),
     };
   }
 
