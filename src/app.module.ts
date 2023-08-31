@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import ormConfig from './config/ormConfig';
@@ -11,7 +9,5 @@ import { ProjectsModule } from './projects/projects.module';
     TypeOrmModule.forRoot(ormConfig()),
     ProjectsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
