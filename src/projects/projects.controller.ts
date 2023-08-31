@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Logger,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -46,7 +47,13 @@ export class ProjectsController {
 
   @Get(':projectId')
   async show(@Param('projectId') projectId: string) {
-    return this.findProjectService.findByProjectId(parseInt(projectId));
+    const project = await this.findProjectService.findByProjectId(
+      parseInt(projectId),
+    );
+    if (!project) {
+      throw new NotFoundException();
+    }
+    return project;
   }
 
   @Patch(':projectId')
@@ -54,15 +61,23 @@ export class ProjectsController {
     @Param('projectId') projectId: string,
     @Body() requestBody: UpdateProjectDto,
   ) {
-    this.logger.log(requestBody);
-    return this.updateProjectService.updateByProjectId(
+    const updateResult = await this.updateProjectService.updateByProjectId(
       parseInt(projectId),
       requestBody,
     );
+    if (updateResult.affected === 0) {
+      throw new NotFoundException();
+    }
+    return updateResult;
   }
 
   @Delete(':projectId')
   async destroy(@Param('projectId') projectId: string) {
-    return this.deleteProjectService.deleteByProjectId(parseInt(projectId));
+    const deleteResult = await this.deleteProjectService.deleteByProjectId(
+      parseInt(projectId),
+    );
+    if (deleteResult.affected === 0) {
+      throw new NotFoundException();
+    }
   }
 }
