@@ -8,33 +8,45 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
+import { CreateProjectService } from './services/create-project.service';
+import { UpdateProjectService } from './services/update-project.service';
+import { FindProjectService } from './services/find-project.service';
+import { DeleteProjectService } from './services/delete-project.service';
+import { ProjectMetricsService } from './services/project-metrics.service';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private projectsService: ProjectsService) {}
+  constructor(
+    private createProjectService: CreateProjectService,
+    private updateProjectService: UpdateProjectService,
+    private findProjectService: FindProjectService,
+    private deleteProjectService: DeleteProjectService,
+    private projectMetricsService: ProjectMetricsService,
+  ) {}
   private readonly logger = new Logger(ProjectsController.name);
 
   @Get()
   async index() {
-    return this.projectsService.findAllProjects();
+    return this.findProjectService.findAllProjects();
   }
 
   @Post()
   async create(@Body() requestBody: CreateProjectDto) {
-    return this.projectsService.createProject(requestBody);
+    return this.createProjectService.createProject(requestBody);
   }
 
   @Get(':projectId/metrics')
   async showMetrics(@Param('projectId') projectId: string) {
-    return this.projectsService.getTimeMetricsByProjectId(parseInt(projectId));
+    return this.projectMetricsService.getTimeMetricsByProjectId(
+      parseInt(projectId),
+    );
   }
 
   @Get(':projectId')
   async show(@Param('projectId') projectId: string) {
-    return this.projectsService.findByProjectId(parseInt(projectId));
+    return this.findProjectService.findByProjectId(parseInt(projectId));
   }
 
   @Patch(':projectId')
@@ -43,7 +55,7 @@ export class ProjectsController {
     @Body() requestBody: UpdateProjectDto,
   ) {
     this.logger.log(requestBody);
-    return this.projectsService.updateByProjectId(
+    return this.updateProjectService.updateByProjectId(
       parseInt(projectId),
       requestBody,
     );
@@ -51,6 +63,6 @@ export class ProjectsController {
 
   @Delete(':projectId')
   async destroy(@Param('projectId') projectId: string) {
-    return this.projectsService.deleteByProjectId(parseInt(projectId));
+    return this.deleteProjectService.deleteByProjectId(parseInt(projectId));
   }
 }
