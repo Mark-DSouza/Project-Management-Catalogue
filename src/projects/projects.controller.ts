@@ -6,6 +6,7 @@ import {
   Logger,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -39,17 +40,13 @@ export class ProjectsController {
   }
 
   @Get(':projectId/metrics')
-  async showMetrics(@Param('projectId') projectId: string) {
-    return this.projectMetricsService.getTimeMetricsByProjectId(
-      parseInt(projectId),
-    );
+  async showMetrics(@Param('projectId', ParseIntPipe) projectId: number) {
+    return this.projectMetricsService.getTimeMetricsByProjectId(projectId);
   }
 
   @Get(':projectId')
-  async show(@Param('projectId') projectId: string) {
-    const project = await this.findProjectService.findByProjectId(
-      parseInt(projectId),
-    );
+  async show(@Param('projectId', ParseIntPipe) projectId: number) {
+    const project = await this.findProjectService.findByProjectId(projectId);
     if (!project) {
       throw new NotFoundException();
     }
@@ -58,11 +55,11 @@ export class ProjectsController {
 
   @Patch(':projectId')
   async update(
-    @Param('projectId') projectId: string,
+    @Param('projectId', ParseIntPipe) projectId: number,
     @Body() requestBody: UpdateProjectDto,
   ) {
     const updateResult = await this.updateProjectService.updateByProjectId(
-      parseInt(projectId),
+      projectId,
       requestBody,
     );
     if (updateResult.affected === 0) {
@@ -72,9 +69,9 @@ export class ProjectsController {
   }
 
   @Delete(':projectId')
-  async destroy(@Param('projectId') projectId: string) {
+  async destroy(@Param('projectId', ParseIntPipe) projectId: number) {
     const deleteResult = await this.deleteProjectService.deleteByProjectId(
-      parseInt(projectId),
+      projectId,
     );
     if (deleteResult.affected === 0) {
       throw new NotFoundException();
