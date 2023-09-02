@@ -4,14 +4,18 @@ import * as argon from 'argon2';
 import { User } from 'src/users/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { AuthDto } from './dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
   private readonly logger = new Logger(AuthService.name);
-  async signup(dto: AuthDto): Promise<Omit<User, 'hashedPassword'>> {
+  async signup(dto: AuthDto) {
     try {
       // generate the hashed password
       const hashedPassword = await argon.hash(dto.password);
@@ -22,10 +26,7 @@ export class AuthService {
         hashedPassword,
       });
 
-      // return the saved user
-      delete user.hashedPassword;
-
-      return user;
+      return this.signToken(user.id, user.email);
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -57,8 +58,24 @@ export class AuthService {
       throw new ForbiddenException('Credentials incorrect');
     }
 
-    // send back the user
-    delete user.hashedPassword;
-    return user;
+    return this.signToken(user.id, user.email);
+  }
+
+  async signToken(userId: number, email: string) {
+    const payload = {
+      sub: userId,
+      email,
+    };
+
+    const secret = this.configService.get('JWT_SECRET');
+
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: '15m',
+      secret: secret,
+    });
+
+    return {
+      access_token: token,
+    };
   }
 }
